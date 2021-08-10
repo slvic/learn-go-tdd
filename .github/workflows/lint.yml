@@ -11,17 +11,14 @@ on:
       - master
 
 jobs:
-  run-linters:
-    name: Run linters
+  golangci:
+    name: lint
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v2
-
-      # Install your linters here
-
-      - name: Run linters
-        uses: wearerequired/lint-action@v1
+      - uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
         with:
-          golint: true
+          version: v1.39
+          
+
