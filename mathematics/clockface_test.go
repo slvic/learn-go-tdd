@@ -125,7 +125,10 @@ func TestSVGWriterSecondHand(t *testing.T) {
 			SVGWriter(&b, c.time)
 
 			svg := SVG{}
-			xml.Unmarshal(b.Bytes(), &svg)
+			err := xml.Unmarshal(b.Bytes(), &svg)
+			if err != nil {
+				t.Error("Unmarshal returned error")
+			}
 
 			if !containsLine(c.line, svg.Line) {
 				t.Errorf("Expected to find the second hand line %+v, in the SVG lines %+v", c.line, svg.Line)
@@ -151,7 +154,10 @@ func TestSVGWriterMinuteHand(t *testing.T) {
 			SVGWriter(&b, c.time)
 
 			svg := SVG{}
-			xml.Unmarshal(b.Bytes(), &svg)
+			err := xml.Unmarshal(b.Bytes(), &svg)
+			if err != nil {
+				t.Error("Unmarshal returned error")
+			}
 
 			if !containsLine(c.line, svg.Line) {
 				t.Errorf("Expected to find the minute hand line %+v, in the SVG lines %+v", c.line, svg.Line)
@@ -177,7 +183,10 @@ func TestSVGWriterHourHand(t *testing.T) {
 			SVGWriter(&b, c.time)
 
 			svg := SVG{}
-			xml.Unmarshal(b.Bytes(), &svg)
+			err := xml.Unmarshal(b.Bytes(), &svg)
+			if err != nil {
+				t.Error("Unmarshal returned error")
+			}
 
 			if !containsLine(c.line, svg.Line) {
 				t.Errorf("Expected to find the hour hand line %+v, in the SVG lines %+v", c.line, svg.Line)

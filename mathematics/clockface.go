@@ -23,7 +23,7 @@ const (
 
 const (
 	secondsInHalfClock = 30
-	secondsInClock     = 2 * secondsInHalfClock
+	//secondsInClock     = 2 * //secondsInHalfClock
 	minutesInHalfClock = 30
 	minutesInClock     = 2 * minutesInHalfClock
 	hoursInHalfClock   = 6
