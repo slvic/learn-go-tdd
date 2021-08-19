@@ -12,7 +12,7 @@ const JsonContentType = "application/json"
 type PlayerStore interface {
 	GetPlayerScore(name string) int
 	RecordWin(name string)
-	GetLeague() []Player
+	GetLeague() League
 }
 
 type PlayerServer struct {
@@ -71,7 +71,7 @@ func (p *PlayerServer) showScore(w http.ResponseWriter, player string) {
 		w.WriteHeader(http.StatusNotFound)
 	}
 
-	_,err := fmt.Fprint(w, score)
+	_, err := fmt.Fprint(w, score)
 	if err != nil {
 		fmt.Println(err)
 	}
