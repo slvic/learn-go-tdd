@@ -1,4 +1,4 @@
-package main
+package poker
 
 import (
 	"encoding/json"
@@ -30,6 +30,30 @@ func NewFileSystemPlayerStore(file *os.File) (*FileSystemPlayerStore, error) {
 		Database: json.NewEncoder(&Tape{file}),
 		league:   league,
 	}, nil
+}
+
+func FileSystemPlayerStoreFromFile(path string) (*FileSystemPlayerStore, func(), error) {
+	db, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0666)
+
+	if err != nil {
+		return nil, nil, fmt.Errorf("problem opening %s %v", path, err)
+	}
+
+	closeFunc := func() {
+		err = db.Close()
+	}
+
+	if err != nil {
+		return nil, nil, fmt.Errorf("could not close the connection: %v", err)
+	}
+
+	store, err := NewFileSystemPlayerStore(db)
+
+	if err != nil {
+		return nil, nil, fmt.Errorf("problem creating file system player store, %v ", err)
+	}
+
+	return store, closeFunc, nil
 }
 
 func initialisePlayerDBFile(file *os.File) (err error) {
@@ -67,7 +91,6 @@ func (f *FileSystemPlayerStore) GetLeague() League {
 }
 
 func (f *FileSystemPlayerStore) GetPlayerScore(name string) int {
-
 	player := f.league.Find(name)
 
 	if player != nil {

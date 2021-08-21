@@ -1,10 +1,10 @@
-package main_test
+package poker_test
 
 import (
 	"io/ioutil"
 	"testing"
 
-	httpserver "github.com/vkenrik117/httpserver"
+	poker "github.com/vkenrik117/httpserver"
 )
 
 func TestTape_Write(t *testing.T) {
@@ -13,7 +13,7 @@ func TestTape_Write(t *testing.T) {
 	file, clean := createTempFile(t, "12345")
 	defer clean()
 
-	tape := &httpserver.Tape{file}
+	tape := &poker.Tape{File: file}
 
 	_, err = tape.Write([]byte("abc"))
 	if err != nil {
