@@ -1,7 +1,7 @@
 package main
 
 import (
-	poker "github.com/vkenrik117/httpserver"
+	poker "github.com/vkenrik117/poker"
 	"log"
 	"net/http"
 )

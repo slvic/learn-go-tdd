@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	poker "github.com/vkenrik117/httpserver"
+	poker "github.com/vkenrik117/poker"
 )
 
 func TestTape_Write(t *testing.T) {

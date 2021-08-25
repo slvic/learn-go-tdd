@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	poker "github.com/vkenrik117/httpserver"
+	poker "github.com/vkenrik117/poker"
 )
 
 func createTempFile(t testing.TB, initialData string) (*os.File, func()) {

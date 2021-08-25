@@ -2,11 +2,45 @@ package poker
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http/httptest"
 	"reflect"
 	"testing"
+	"time"
 )
+
+type GameSpy struct {
+	StartedWith  int
+	FinishedWith string
+	StartCalled bool
+}
+
+func (g *GameSpy) Start(numberOfPlayers int) {
+	g.StartedWith = numberOfPlayers
+	g.StartCalled = true
+}
+
+func (g *GameSpy) Finish(winner string) {
+	g.FinishedWith = winner
+}
+
+type ScheduledAlert struct {
+	At     time.Duration
+	Amount int
+}
+
+func (s ScheduledAlert) String() string {
+	return fmt.Sprintf("%d chips At %v", s.Amount, s.At)
+}
+
+type SpyBlindAlerter struct {
+	Alerts []ScheduledAlert
+}
+
+func (s *SpyBlindAlerter) ScheduleAlertAt(at time.Duration, amount int) {
+	s.Alerts = append(s.Alerts, ScheduledAlert{At: at, Amount: amount})
+}
 
 type StubPlayerStore struct {
 	scores   map[string]int
@@ -100,5 +134,12 @@ func AssertResponseBody(t testing.TB, got, want string) {
 	t.Helper()
 	if got != want {
 		t.Errorf("response body is wrong, got %q want %q", got, want)
+	}
+}
+
+func AssertScheduledAlert(t testing.TB, got, want ScheduledAlert) {
+	t.Helper()
+	if got != want {
+		t.Errorf("got ScheduledAlert %v want %v", got, want)
 	}
 }

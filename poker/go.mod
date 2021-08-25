@@ -1,3 +1,3 @@
-module github.com/vkenrik117/httpserver
+module github.com/vkenrik117/poker
 
 go 1.17

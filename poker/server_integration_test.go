@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	poker "github.com/vkenrik117/httpserver"
+	poker "github.com/vkenrik117/poker"
 )
 
 func TestRecordingWinsAndRetrievingThem(t *testing.T) {
