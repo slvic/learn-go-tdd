@@ -38,7 +38,7 @@ type SpyBlindAlerter struct {
 	Alerts []ScheduledAlert
 }
 
-func (s *SpyBlindAlerter) ScheduleAlertAt(at time.Duration, amount int) {
+func (s *SpyBlindAlerter) ScheduleAlertAt(at time.Duration, amount int, _ io.Writer) {
 	s.Alerts = append(s.Alerts, ScheduledAlert{At: at, Amount: amount})
 }
 
@@ -123,10 +123,11 @@ func AssertLeague(t testing.TB, got, want []Player) {
 	}
 }
 
-func AssertStatus(t testing.TB, got, want int) {
+func AssertStatus(t testing.TB, got *httptest.ResponseRecorder, want int) {
 	t.Helper()
-	if got != want {
-		t.Errorf("did not get correct status, got %d, want %d", got, want)
+	responseCode := got.Code
+	if responseCode != want {
+		t.Errorf("did not get correct status, got %d, want %d", responseCode, want)
 	}
 }
 

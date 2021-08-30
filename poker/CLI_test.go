@@ -21,7 +21,7 @@ type GameSpy struct {
 	FinishCalledWith string
 }
 
-func (g *GameSpy) Start(numberOfPlayers int) {
+func (g *GameSpy) Start(numberOfPlayers int, _ io.Writer) {
 	g.StartCalled = true
 	g.StartCalledWith = numberOfPlayers
 }
@@ -37,7 +37,7 @@ func userSends(messages ...string) io.Reader {
 
 func TestCLI(t *testing.T) {
 
-	t.Run("start game with 3 players and finish game with 'Chris' as winner", func(t *testing.T) {
+	t.Run("start playGame with 3 players and finish playGame with 'Chris' as winner", func(t *testing.T) {
 		game := &GameSpy{}
 		stdout := &bytes.Buffer{}
 
@@ -51,7 +51,7 @@ func TestCLI(t *testing.T) {
 		assertFinishCalledWith(t, game, "Chris")
 	})
 
-	t.Run("start game with 8 players and record 'Cleo' as winner", func(t *testing.T) {
+	t.Run("start playGame with 8 players and record 'Cleo' as winner", func(t *testing.T) {
 		game := &GameSpy{}
 
 		in := userSends("8", "Cleo wins")
@@ -63,7 +63,7 @@ func TestCLI(t *testing.T) {
 		assertFinishCalledWith(t, game, "Cleo")
 	})
 
-	t.Run("it prints an error when a non numeric value is entered and does not start the game", func(t *testing.T) {
+	t.Run("it prints an error when a non numeric value is entered and does not start the playGame", func(t *testing.T) {
 		game := &GameSpy{}
 
 		stdout := &bytes.Buffer{}
@@ -100,14 +100,14 @@ func assertGameStartedWith(t testing.TB, game *GameSpy, numberOfPlayersWanted in
 func assertGameNotFinished(t testing.TB, game *GameSpy) {
 	t.Helper()
 	if game.FinishedCalled {
-		t.Errorf("game should not have finished")
+		t.Errorf("playGame should not have finished")
 	}
 }
 
 func assertGameNotStarted(t testing.TB, game *GameSpy) {
 	t.Helper()
 	if game.StartCalled {
-		t.Errorf("game should not have started")
+		t.Errorf("playGame should not have started")
 	}
 }
 
