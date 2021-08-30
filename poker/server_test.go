@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	dummyGame = &GameSpy{}
+	dummyGame = &poker.GameSpy{}
 )
 
 func TestGETPlayers(t *testing.T) {
@@ -128,27 +128,32 @@ func TestGame(t *testing.T) {
 		poker.AssertStatus(t, response, http.StatusOK)
 	})
 
-	t.Run("start a playGame with 3 players and declare Ruth the winner", func(t *testing.T) {
+	t.Run("start a game with 3 players, send some blind alerts down WS and declare Ruth the winner", func(t *testing.T) {
+		const tenMS = 10 * time.Millisecond
 		var err error
-		game := &GameSpy{}
+		wantedBlindAlert := "Blind is 100"
 		winner := "Ruth"
+
+		game := &poker.GameSpy{BlindAlert: []byte(wantedBlindAlert)}
 		server := httptest.NewServer(mustMakePlayerServer(t, dummyPlayerStore, game))
 		ws := mustDialWS(t, "ws"+strings.TrimPrefix(server.URL, "http")+"/ws")
 
 		defer server.Close()
-		defer func(){
+		defer func() {
 			err = ws.Close()
 		}()
-		if err != nil{
-			fmt.Printf("problem closing webSocket %v", err)
+		if err != nil {
+			fmt.Printf("problem closing websocket: %v", err)
 		}
 
 		writeWSMessage(t, ws, "3")
 		writeWSMessage(t, ws, winner)
 
-		time.Sleep(10 * time.Millisecond)
+		time.Sleep(tenMS)
+
 		assertGameStartedWith(t, game, 3)
 		assertFinishCalledWith(t, game, winner)
+		within(t, tenMS, func() { assertWebsocketGotMsg(t, ws, wantedBlindAlert) })
 	})
 }
 
@@ -193,5 +198,29 @@ func writeWSMessage(t testing.TB, conn *websocket.Conn, message string) {
 	t.Helper()
 	if err := conn.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
 		t.Fatalf("could not send message over ws connection %v", err)
+	}
+}
+
+func assertWebsocketGotMsg(t *testing.T, ws *websocket.Conn, want string) {
+	_, msg, _ := ws.ReadMessage()
+	if string(msg) != want {
+		t.Errorf(`got "%s", want "%s"`, string(msg), want)
+	}
+}
+
+func within(t testing.TB, d time.Duration, assert func()) {
+	t.Helper()
+
+	done := make(chan struct{}, 1)
+
+	go func() {
+		assert()
+		done <- struct{}{}
+	}()
+
+	select {
+	case <-time.After(d):
+		t.Error("timed out")
+	case <-done:
 	}
 }

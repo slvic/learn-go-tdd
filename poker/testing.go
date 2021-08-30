@@ -11,18 +11,25 @@ import (
 )
 
 type GameSpy struct {
-	StartedWith  int
-	FinishedWith string
-	StartCalled bool
+	StartCalled     bool
+	StartCalledWith int
+	BlindAlert      []byte
+
+	FinishedCalled   bool
+	FinishCalledWith string
 }
 
-func (g *GameSpy) Start(numberOfPlayers int) {
-	g.StartedWith = numberOfPlayers
+func (g *GameSpy) Start(numberOfPlayers int, out io.Writer) {
 	g.StartCalled = true
+	g.StartCalledWith = numberOfPlayers
+	_, err := out.Write(g.BlindAlert)
+	if err != nil {
+		fmt.Printf("problem writing out at the Start: %v", err)
+	}
 }
 
 func (g *GameSpy) Finish(winner string) {
-	g.FinishedWith = winner
+	g.FinishCalledWith = winner
 }
 
 type ScheduledAlert struct {
